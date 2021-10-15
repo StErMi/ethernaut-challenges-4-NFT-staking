@@ -14,12 +14,18 @@ async function main() {
   // await hre.run('compile');
 
   // We get the contract to deploy
-  const WorldPurpose = await ethers.getContractFactory('WorldPurpose');
-  const worldPurpose = await WorldPurpose.deploy();
+  const TokenReward = await ethers.getContractFactory('TokenReward');
+  const tokenReward = await TokenReward.deploy();
+  await tokenReward.deployed();
+  console.log('TokenReward deployed to:', tokenReward.address);
 
-  await worldPurpose.deployed();
+  const NFTStaking = await ethers.getContractFactory('NFTStaking');
+  const nftStaking = await NFTStaking.deploy(tokenReward.address);
+  await nftStaking.deployed();
+  console.log('NFTStaking deployed to:', nftStaking.address);
 
-  console.log('WorldPurpose deployed to:', worldPurpose.address);
+  // Transfer ownership
+  await tokenReward.transferOwnership(nftStaking.address);
 }
 
 // We recommend this pattern to be able to use async/await everywhere
